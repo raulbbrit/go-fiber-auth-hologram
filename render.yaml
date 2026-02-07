@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: go-fiber-auth-hologram
+    env: go
+    plan: free
+    buildCommand: |
+      if [ ! -f go.mod ]; then
+        go mod init fiber-auth-hologram
+      fi
+      go mod tidy
+      go build -o fiber-auth-hologram .
+    startCommand: ./fiber-auth-hologram

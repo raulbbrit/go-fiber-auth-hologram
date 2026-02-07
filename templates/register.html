@@ -1,0 +1,825 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{.Title}} | Hologram Auth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      defer
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <style>
+      @keyframes scanline {
+        0% {
+          transform: translateY(-100%);
+        }
+        100% {
+          transform: translateY(100vh);
+        }
+      }
+
+      @keyframes flicker {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        92% {
+          opacity: 1;
+        }
+        93% {
+          opacity: 0.8;
+        }
+        94% {
+          opacity: 1;
+        }
+        95% {
+          opacity: 0.6;
+        }
+        96% {
+          opacity: 1;
+        }
+      }
+
+      @keyframes glitch-1 {
+        0%,
+        100% {
+          clip-path: inset(0 0 0 0);
+          transform: translate(0);
+        }
+        20% {
+          clip-path: inset(20% 0 60% 0);
+          transform: translate(-2px, 2px);
+        }
+        40% {
+          clip-path: inset(40% 0 40% 0);
+          transform: translate(2px, -2px);
+        }
+        60% {
+          clip-path: inset(60% 0 20% 0);
+          transform: translate(-1px, 1px);
+        }
+        80% {
+          clip-path: inset(80% 0 5% 0);
+          transform: translate(1px, -1px);
+        }
+      }
+
+      @keyframes hologram-pulse {
+        0%,
+        100% {
+          box-shadow:
+            0 0 20px rgba(0, 255, 255, 0.3),
+            0 0 40px rgba(0, 255, 255, 0.2),
+            0 0 60px rgba(0, 255, 255, 0.1),
+            inset 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+        50% {
+          box-shadow:
+            0 0 30px rgba(0, 255, 255, 0.5),
+            0 0 60px rgba(0, 255, 255, 0.3),
+            0 0 90px rgba(0, 255, 255, 0.2),
+            inset 0 0 30px rgba(0, 255, 255, 0.2);
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) rotateX(5deg);
+        }
+        50% {
+          transform: translateY(-10px) rotateX(5deg);
+        }
+      }
+
+      @keyframes grid-flow {
+        0% {
+          background-position: 0 0;
+        }
+        100% {
+          background-position: 0 50px;
+        }
+      }
+
+      @keyframes particle-float {
+        0%,
+        100% {
+          transform: translateY(0) translateX(0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) translateX(20px);
+          opacity: 0;
+        }
+      }
+
+      @keyframes hexagon-rotate {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .hologram-scanline {
+        animation: scanline 3s linear infinite;
+      }
+
+      .hologram-flicker {
+        animation: flicker 4s infinite;
+      }
+
+      .hologram-glitch {
+        animation: glitch-1 0.3s infinite;
+      }
+
+      .hologram-pulse {
+        animation: hologram-pulse 2s ease-in-out infinite;
+      }
+
+      .hologram-float {
+        animation: float 3s ease-in-out infinite;
+      }
+
+      .grid-floor {
+        background-image:
+          linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: grid-flow 2s linear infinite;
+      }
+
+      .particle {
+        animation: particle-float 8s ease-in-out infinite;
+      }
+
+      .hexagon-ring {
+        animation: hexagon-rotate 20s linear infinite;
+      }
+
+      .hologram-text {
+        text-shadow:
+          0 0 10px rgba(0, 255, 255, 0.8),
+          0 0 20px rgba(0, 255, 255, 0.6),
+          0 0 30px rgba(0, 255, 255, 0.4);
+      }
+
+      .input-hologram {
+        background: rgba(0, 255, 255, 0.05);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        box-shadow:
+          0 0 10px rgba(0, 255, 255, 0.1),
+          inset 0 0 10px rgba(0, 255, 255, 0.05);
+      }
+
+      .input-hologram:focus {
+        border-color: rgba(0, 255, 255, 0.8);
+        box-shadow:
+          0 0 20px rgba(0, 255, 255, 0.3),
+          inset 0 0 15px rgba(0, 255, 255, 0.1);
+      }
+
+      .btn-hologram {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 255, 255, 0.2),
+          rgba(0, 150, 255, 0.2)
+        );
+        border: 1px solid rgba(0, 255, 255, 0.5);
+        box-shadow:
+          0 0 20px rgba(0, 255, 255, 0.2),
+          inset 0 0 20px rgba(0, 255, 255, 0.1);
+      }
+
+      .btn-hologram:hover {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 255, 255, 0.4),
+          rgba(0, 150, 255, 0.4)
+        );
+        box-shadow:
+          0 0 30px rgba(0, 255, 255, 0.4),
+          inset 0 0 30px rgba(0, 255, 255, 0.2);
+      }
+
+      .projection-beam {
+        background: linear-gradient(
+          to top,
+          rgba(0, 255, 255, 0.4) 0%,
+          rgba(0, 255, 255, 0.1) 50%,
+          transparent 100%
+        );
+        clip-path: polygon(30% 100%, 70% 100%, 55% 0%, 45% 0%);
+      }
+
+      .strength-bar {
+        transition: all 0.3s ease;
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-gray-950 overflow-hidden">
+    <div
+      x-data="registerForm()"
+      class="relative min-h-screen flex items-center justify-center p-4"
+    >
+      <!-- Grid Floor -->
+      <div
+        class="fixed inset-0 grid-floor opacity-30"
+        style="perspective: 500px; transform: rotateX(60deg) translateY(50%)"
+      ></div>
+
+      <!-- Hexagon Ring -->
+      <div
+        class="fixed inset-0 flex items-center justify-center pointer-events-none"
+      >
+        <div
+          class="hexagon-ring w-[800px] h-[800px] border border-cyan-500/10 rounded-full"
+        ></div>
+        <div
+          class="hexagon-ring absolute w-[600px] h-[600px] border border-cyan-500/20 rounded-full"
+          style="animation-direction: reverse"
+        ></div>
+      </div>
+
+      <!-- Floating Particles -->
+      <template x-for="i in 25" :key="i">
+        <div
+          class="particle fixed w-1 h-1 rounded-full bg-cyan-400 opacity-60"
+          :style="`left: ${Math.random() * 100}%; bottom: -10px; animation-delay: ${Math.random() * 8}s; animation-duration: ${5 + Math.random() * 5}s;`"
+        ></div>
+      </template>
+
+      <!-- Scanline Overlay -->
+      <div class="fixed inset-0 pointer-events-none overflow-hidden z-50">
+        <div
+          class="hologram-scanline absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-50"
+        ></div>
+      </div>
+
+      <!-- Static Noise Overlay -->
+      <div
+        class="fixed inset-0 pointer-events-none z-40 opacity-5"
+        style="
+          background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E&quot;);
+        "
+      ></div>
+
+      <!-- Main Hologram Container -->
+      <div class="relative z-10" style="perspective: 1000px">
+        <!-- Projection Beam -->
+        <div
+          class="absolute -bottom-32 left-1/2 -translate-x-1/2 w-96 h-64 projection-beam opacity-40"
+        ></div>
+
+        <!-- Hologram Form Card -->
+        <div class="hologram-float hologram-flicker relative">
+          <form
+            @submit.prevent="submit"
+            class="hologram-pulse relative w-[420px] p-8 rounded-lg backdrop-blur-sm"
+            style="
+              background: linear-gradient(
+                135deg,
+                rgba(0, 20, 40, 0.8),
+                rgba(0, 40, 60, 0.6)
+              );
+              border: 1px solid rgba(0, 255, 255, 0.3);
+            "
+          >
+            <!-- Glitch Layer -->
+            <div
+              class="absolute inset-0 rounded-lg opacity-0 pointer-events-none"
+              :class="{'hologram-glitch opacity-30': isSubmitting}"
+              style="
+                background: linear-gradient(
+                  135deg,
+                  rgba(0, 255, 255, 0.1),
+                  rgba(255, 0, 255, 0.1)
+                );
+              "
+            ></div>
+
+            <!-- Corner Decorations -->
+            <div
+              class="absolute top-0 left-0 w-6 h-6 border-l-2 border-t-2 border-cyan-400 rounded-tl-lg"
+            ></div>
+            <div
+              class="absolute top-0 right-0 w-6 h-6 border-r-2 border-t-2 border-cyan-400 rounded-tr-lg"
+            ></div>
+            <div
+              class="absolute bottom-0 left-0 w-6 h-6 border-l-2 border-b-2 border-cyan-400 rounded-bl-lg"
+            ></div>
+            <div
+              class="absolute bottom-0 right-0 w-6 h-6 border-r-2 border-b-2 border-cyan-400 rounded-br-lg"
+            ></div>
+
+            <!-- Header -->
+            <div class="text-center mb-6">
+              <div class="inline-block mb-4">
+                <svg
+                  class="w-14 h-14 mx-auto text-cyan-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1"
+                    d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                  />
+                </svg>
+              </div>
+              <h1
+                class="hologram-text text-2xl font-light text-cyan-300 tracking-widest uppercase"
+              >
+                Initialize
+              </h1>
+              <p class="text-cyan-500/60 text-sm mt-2 tracking-wider">
+                Create hologram identity
+              </p>
+            </div>
+
+            <!-- Global Error -->
+            <div
+              x-show="globalError"
+              x-transition
+              class="mb-4 p-3 rounded border border-red-500/50 bg-red-500/10 backdrop-blur-sm"
+            >
+              <p
+                class="text-red-400 text-sm text-center"
+                x-text="globalError"
+              ></p>
+            </div>
+
+            <!-- Email Field -->
+            <div class="mb-4">
+              <label
+                class="block text-cyan-400/80 text-xs tracking-wider mb-2 uppercase"
+                >Frequency ID</label
+              >
+              <input
+                type="email"
+                x-model="email"
+                @input.debounce.500ms="validateEmailAsync"
+                @blur="validateField('email')"
+                :class="{
+                                   'border-red-500': errors.email, 
+                                   'border-green-500': emailValid && !errors.email,
+                                   'border-yellow-500': emailChecking
+                               }"
+                class="input-hologram w-full px-4 py-3 rounded text-cyan-100 placeholder-cyan-600/50 focus:outline-none transition-all duration-300"
+                placeholder="identity@hologram.io"
+              />
+              <div class="h-5 mt-1">
+                <p
+                  x-show="emailChecking"
+                  class="text-yellow-400 text-xs flex items-center gap-1"
+                >
+                  <svg
+                    class="animate-spin w-3 h-3"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      class="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      stroke-width="4"
+                    ></circle>
+                    <path
+                      class="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                    ></path>
+                  </svg>
+                  <span>Scanning holomatrix...</span>
+                </p>
+                <p
+                  x-show="errors.email && !emailChecking"
+                  x-text="errors.email"
+                  class="text-red-400 text-xs"
+                  x-transition
+                ></p>
+                <p
+                  x-show="emailValid && !errors.email && !emailChecking"
+                  class="text-green-400 text-xs flex items-center gap-1"
+                  x-transition
+                >
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span>Frequency available</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Password Field -->
+            <div class="mb-4">
+              <label
+                class="block text-cyan-400/80 text-xs tracking-wider mb-2 uppercase"
+                >Access Cipher</label
+              >
+              <div class="relative">
+                <input
+                  :type="showPassword ? 'text' : 'password'"
+                  x-model="password"
+                  @input="validatePasswordStrength"
+                  :class="{'border-red-500': errors.password}"
+                  class="input-hologram w-full px-4 py-3 rounded text-cyan-100 placeholder-cyan-600/50 focus:outline-none transition-all duration-300 pr-12"
+                  placeholder="Strong cipher"
+                />
+                <button
+                  type="button"
+                  @click="showPassword = !showPassword"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-500 hover:text-cyan-300 transition-colors"
+                >
+                  <svg
+                    x-show="!showPassword"
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
+                  </svg>
+                  <svg
+                    x-show="showPassword"
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <!-- Password Strength Indicator -->
+              <div class="mt-2">
+                <div class="flex gap-1 mb-1">
+                  <template x-for="i in 6" :key="i">
+                    <div
+                      class="strength-bar h-1 flex-1 rounded"
+                      :class="{
+                                             'bg-gray-700': i > passwordStrength,
+                                             'bg-red-500': i <= passwordStrength && passwordStrength <= 2,
+                                             'bg-yellow-500': i <= passwordStrength && passwordStrength > 2 && passwordStrength <= 4,
+                                             'bg-green-500': i <= passwordStrength && passwordStrength > 4
+                                         }"
+                    ></div>
+                  </template>
+                </div>
+                <p
+                  class="text-xs"
+                  :class="{
+                                'text-red-400': passwordStrength <= 2,
+                                'text-yellow-400': passwordStrength > 2 && passwordStrength <= 4,
+                                'text-green-400': passwordStrength > 4
+                            }"
+                >
+                  <span
+                    x-text="passwordStrength <= 2 ? 'Weak cipher' : (passwordStrength <= 4 ? 'Moderate cipher' : 'Strong cipher')"
+                  ></span>
+                </p>
+                <ul x-show="passwordHints.length > 0" class="mt-1 space-y-0.5">
+                  <template x-for="hint in passwordHints" :key="hint">
+                    <li
+                      class="text-cyan-500/60 text-xs flex items-center gap-1"
+                    >
+                      <span class="w-1 h-1 rounded-full bg-cyan-500/60"></span>
+                      <span x-text="hint"></span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="mb-6">
+              <label
+                class="block text-cyan-400/80 text-xs tracking-wider mb-2 uppercase"
+                >Confirm Cipher</label
+              >
+              <input
+                type="password"
+                x-model="confirmPassword"
+                @input="validateConfirmPassword"
+                :class="{
+                                   'border-red-500': errors.confirmPassword, 
+                                   'border-green-500': confirmPassword && confirmPassword === password
+                               }"
+                class="input-hologram w-full px-4 py-3 rounded text-cyan-100 placeholder-cyan-600/50 focus:outline-none transition-all duration-300"
+                placeholder="Repeat cipher"
+              />
+              <div class="h-5 mt-1">
+                <p
+                  x-show="errors.confirmPassword"
+                  x-text="errors.confirmPassword"
+                  class="text-red-400 text-xs"
+                  x-transition
+                ></p>
+                <p
+                  x-show="confirmPassword && confirmPassword === password && !errors.confirmPassword"
+                  class="text-green-400 text-xs flex items-center gap-1"
+                  x-transition
+                >
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path
+                      fill-rule="evenodd"
+                      d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                  <span>Ciphers matched</span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              :disabled="isSubmitting || !canSubmit"
+              class="btn-hologram w-full py-3 rounded text-cyan-300 font-medium tracking-widest uppercase transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span
+                x-show="!isSubmitting"
+                class="flex items-center justify-center gap-2"
+              >
+                <span>Materialize Identity</span>
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                  />
+                </svg>
+              </span>
+              <span
+                x-show="isSubmitting"
+                class="flex items-center justify-center gap-2"
+              >
+                <svg
+                  class="animate-spin w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  ></path>
+                </svg>
+                <span>Materializing...</span>
+              </span>
+            </button>
+
+            <!-- Login Link -->
+            <div class="mt-6 text-center">
+              <p class="text-cyan-600 text-sm">
+                Already initialized?
+                <a
+                  href="/login"
+                  class="text-cyan-400 hover:text-cyan-300 transition-colors underline underline-offset-4"
+                >
+                  Access hologram
+                </a>
+              </p>
+            </div>
+          </form>
+        </div>
+
+        <!-- Pedestal -->
+        <div class="absolute -bottom-20 left-1/2 -translate-x-1/2 w-56 h-8">
+          <div
+            class="w-full h-full rounded-full bg-gradient-to-t from-cyan-500/30 to-cyan-400/10 blur-md"
+          ></div>
+          <div
+            class="absolute inset-2 rounded-full border border-cyan-400/50"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Tech Lines Decoration -->
+      <div class="fixed bottom-10 left-10 text-cyan-500/30 text-xs font-mono">
+        <div>SYS.INIT.v3.2.1</div>
+        <div>HOLOMATRIX:READY</div>
+      </div>
+
+      <div
+        class="fixed top-10 right-10 text-cyan-500/30 text-xs font-mono text-right"
+      >
+        <div>MATERIALIZATION:PENDING</div>
+        <div>QUANTUM:STABLE</div>
+      </div>
+    </div>
+
+    <script>
+      function registerForm() {
+        return {
+          email: "",
+          password: "",
+          confirmPassword: "",
+          showPassword: false,
+          isSubmitting: false,
+          emailChecking: false,
+          emailValid: false,
+          passwordStrength: 0,
+          passwordHints: [],
+          errors: {},
+          globalError: "",
+
+          get canSubmit() {
+            return (
+              this.email &&
+              this.emailValid &&
+              this.passwordStrength >= 4 &&
+              this.password === this.confirmPassword &&
+              Object.keys(this.errors).length === 0
+            );
+          },
+
+          validateField(field) {
+            if (field === "email") {
+              if (!this.email) {
+                this.errors.email = "Email frequency required";
+                this.emailValid = false;
+              } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {
+                this.errors.email = "Invalid frequency pattern";
+                this.emailValid = false;
+              }
+            }
+          },
+
+          async validateEmailAsync() {
+            if (!this.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {
+              this.validateField("email");
+              return;
+            }
+
+            this.emailChecking = true;
+            delete this.errors.email;
+
+            try {
+              const formData = new FormData();
+              formData.append("email", this.email);
+
+              const response = await fetch("/api/validate/email", {
+                method: "POST",
+                body: formData,
+              });
+
+              const data = await response.json();
+
+              if (data.valid) {
+                this.emailValid = true;
+                delete this.errors.email;
+              } else {
+                this.emailValid = false;
+                this.errors.email = data.message;
+              }
+            } catch (error) {
+              this.errors.email = "Verification failed";
+              this.emailValid = false;
+            } finally {
+              this.emailChecking = false;
+            }
+          },
+
+          validatePasswordStrength() {
+            this.passwordStrength = 0;
+            this.passwordHints = [];
+
+            if (this.password.length >= 6) {
+              this.passwordStrength++;
+            } else {
+              this.passwordHints.push("Min 6 characters");
+            }
+
+            if (/[A-Z]/.test(this.password)) {
+              this.passwordStrength++;
+            } else {
+              this.passwordHints.push("Add uppercase");
+            }
+
+            if (/[a-z]/.test(this.password)) {
+              this.passwordStrength++;
+            } else {
+              this.passwordHints.push("Add lowercase");
+            }
+
+            if (/[0-9]/.test(this.password)) {
+              this.passwordStrength++;
+            } else {
+              this.passwordHints.push("Add number");
+            }
+
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(this.password)) {
+              this.passwordStrength++;
+            }
+
+            if (this.password.length >= 12) {
+              this.passwordStrength++;
+            }
+
+            this.validateConfirmPassword();
+          },
+
+          validateConfirmPassword() {
+            if (
+              this.confirmPassword &&
+              this.confirmPassword !== this.password
+            ) {
+              this.errors.confirmPassword = "Ciphers do not match";
+            } else {
+              delete this.errors.confirmPassword;
+            }
+          },
+
+          async submit() {
+            this.globalError = "";
+
+            if (!this.canSubmit) return;
+
+            this.isSubmitting = true;
+
+            try {
+              const formData = new FormData();
+              formData.append("email", this.email);
+              formData.append("password", this.password);
+              formData.append("confirm_password", this.confirmPassword);
+
+              const response = await fetch("/register", {
+                method: "POST",
+                body: formData,
+              });
+
+              const data = await response.json();
+
+              if (data.success) {
+                window.location.href = "/dashboard";
+              } else {
+                if (data.errors) {
+                  data.errors.forEach((err) => {
+                    this.errors[err.field] = err.message;
+                    if (err.field === "email") this.emailValid = false;
+                  });
+                }
+                if (data.message) {
+                  this.globalError = data.message;
+                }
+              }
+            } catch (error) {
+              this.globalError = "Holomatrix connection failed";
+            } finally {
+              this.isSubmitting = false;
+            }
+          },
+        };
+      }
+    </script>
+  </body>
+</html>

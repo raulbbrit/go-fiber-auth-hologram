@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{.Title}} | Hologram Auth</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script
+      defer
+      src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"
+    ></script>
+    <style>
+      @keyframes scanline {
+        0% {
+          transform: translateY(-100%);
+        }
+        100% {
+          transform: translateY(100vh);
+        }
+      }
+
+      @keyframes flicker {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        92% {
+          opacity: 1;
+        }
+        93% {
+          opacity: 0.8;
+        }
+        94% {
+          opacity: 1;
+        }
+        95% {
+          opacity: 0.6;
+        }
+        96% {
+          opacity: 1;
+        }
+      }
+
+      @keyframes glitch-1 {
+        0%,
+        100% {
+          clip-path: inset(0 0 0 0);
+          transform: translate(0);
+        }
+        20% {
+          clip-path: inset(20% 0 60% 0);
+          transform: translate(-2px, 2px);
+        }
+        40% {
+          clip-path: inset(40% 0 40% 0);
+          transform: translate(2px, -2px);
+        }
+        60% {
+          clip-path: inset(60% 0 20% 0);
+          transform: translate(-1px, 1px);
+        }
+        80% {
+          clip-path: inset(80% 0 5% 0);
+          transform: translate(1px, -1px);
+        }
+      }
+
+      @keyframes hologram-pulse {
+        0%,
+        100% {
+          box-shadow:
+            0 0 20px rgba(0, 255, 255, 0.3),
+            0 0 40px rgba(0, 255, 255, 0.2),
+            0 0 60px rgba(0, 255, 255, 0.1),
+            inset 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+        50% {
+          box-shadow:
+            0 0 30px rgba(0, 255, 255, 0.5),
+            0 0 60px rgba(0, 255, 255, 0.3),
+            0 0 90px rgba(0, 255, 255, 0.2),
+            inset 0 0 30px rgba(0, 255, 255, 0.2);
+        }
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) rotateX(5deg);
+        }
+        50% {
+          transform: translateY(-10px) rotateX(5deg);
+        }
+      }
+
+      @keyframes grid-flow {
+        0% {
+          background-position: 0 0;
+        }
+        100% {
+          background-position: 0 50px;
+        }
+      }
+
+      @keyframes particle-float {
+        0%,
+        100% {
+          transform: translateY(0) translateX(0);
+          opacity: 0;
+        }
+        10% {
+          opacity: 1;
+        }
+        90% {
+          opacity: 1;
+        }
+        100% {
+          transform: translateY(-100vh) translateX(20px);
+          opacity: 0;
+        }
+      }
+
+      .hologram-scanline {
+        animation: scanline 3s linear infinite;
+      }
+
+      .hologram-flicker {
+        animation: flicker 4s infinite;
+      }
+
+      .hologram-glitch {
+        animation: glitch-1 0.3s infinite;
+      }
+
+      .hologram-pulse {
+        animation: hologram-pulse 2s ease-in-out infinite;
+      }
+
+      .hologram-float {
+        animation: float 3s ease-in-out infinite;
+      }
+
+      .grid-floor {
+        background-image:
+          linear-gradient(rgba(0, 255, 255, 0.1) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(0, 255, 255, 0.1) 1px, transparent 1px);
+        background-size: 50px 50px;
+        animation: grid-flow 2s linear infinite;
+      }
+
+      .particle {
+        animation: particle-float 8s ease-in-out infinite;
+      }
+
+      .hologram-text {
+        text-shadow:
+          0 0 10px rgba(0, 255, 255, 0.8),
+          0 0 20px rgba(0, 255, 255, 0.6),
+          0 0 30px rgba(0, 255, 255, 0.4);
+      }
+
+      .input-hologram {
+        background: rgba(0, 255, 255, 0.05);
+        border: 1px solid rgba(0, 255, 255, 0.3);
+        box-shadow:
+          0 0 10px rgba(0, 255, 255, 0.1),
+          inset 0 0 10px rgba(0, 255, 255, 0.05);
+      }
+
+      .input-hologram:focus {
+        border-color: rgba(0, 255, 255, 0.8);
+        box-shadow:
+          0 0 20px rgba(0, 255, 255, 0.3),
+          inset 0 0 15px rgba(0, 255, 255, 0.1);
+      }
+
+      .btn-hologram {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 255, 255, 0.2),
+          rgba(0, 150, 255, 0.2)
+        );
+        border: 1px solid rgba(0, 255, 255, 0.5);
+        box-shadow:
+          0 0 20px rgba(0, 255, 255, 0.2),
+          inset 0 0 20px rgba(0, 255, 255, 0.1);
+      }
+
+      .btn-hologram:hover {
+        background: linear-gradient(
+          135deg,
+          rgba(0, 255, 255, 0.4),
+          rgba(0, 150, 255, 0.4)
+        );
+        box-shadow:
+          0 0 30px rgba(0, 255, 255, 0.4),
+          inset 0 0 30px rgba(0, 255, 255, 0.2);
+      }
+
+      .projection-beam {
+        background: linear-gradient(
+          to top,
+          rgba(0, 255, 255, 0.4) 0%,
+          rgba(0, 255, 255, 0.1) 50%,
+          transparent 100%
+        );
+        clip-path: polygon(30% 100%, 70% 100%, 55% 0%, 45% 0%);
+      }
+    </style>
+  </head>
+  <body class="min-h-screen bg-gray-950 overflow-hidden">
+    <div
+      x-data="loginForm()"
+      class="relative min-h-screen flex items-center justify-center p-4"
+    >
+      <!-- Grid Floor -->
+      <div
+        class="fixed inset-0 grid-floor opacity-30"
+        style="perspective: 500px; transform: rotateX(60deg) translateY(50%)"
+      ></div>
+
+      <!-- Floating Particles -->
+      <template x-for="i in 20" :key="i">
+        <div
+          class="particle fixed w-1 h-1 rounded-full bg-cyan-400 opacity-60"
+          :style="`left: ${Math.random() * 100}%; bottom: -10px; animation-delay: ${Math.random() * 8}s; animation-duration: ${5 + Math.random() * 5}s;`"
+        ></div>
+      </template>
+
+      <!-- Scanline Overlay -->
+      <div class="fixed inset-0 pointer-events-none overflow-hidden z-50">
+        <div
+          class="hologram-scanline absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-400 to-transparent opacity-50"
+        ></div>
+      </div>
+
+      <!-- Static Noise Overlay -->
+      <div
+        class="fixed inset-0 pointer-events-none z-40 opacity-5"
+        style="
+          background-image: url(&quot;data:image/svg+xml,%3Csvg viewBox=%220 0 200 200%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22noise%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.9%22 numOctaves=%223%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23noise)%22/%3E%3C/svg%3E&quot;);
+        "
+      ></div>
+
+      <!-- Main Hologram Container -->
+      <div class="relative z-10" style="perspective: 1000px">
+        <!-- Projection Beam -->
+        <div
+          class="absolute -bottom-32 left-1/2 -translate-x-1/2 w-80 h-64 projection-beam opacity-40"
+        ></div>
+
+        <!-- Hologram Form Card -->
+        <div class="hologram-float hologram-flicker relative">
+          <form
+            @submit.prevent="submit"
+            class="hologram-pulse relative w-96 p-8 rounded-lg backdrop-blur-sm"
+            style="
+              background: linear-gradient(
+                135deg,
+                rgba(0, 20, 40, 0.8),
+                rgba(0, 40, 60, 0.6)
+              );
+              border: 1px solid rgba(0, 255, 255, 0.3);
+            "
+          >
+            <!-- Glitch Layer -->
+            <div
+              class="absolute inset-0 rounded-lg opacity-0 hover:opacity-100 pointer-events-none"
+              :class="{'hologram-glitch opacity-30': isSubmitting}"
+              style="
+                background: linear-gradient(
+                  135deg,
+                  rgba(0, 255, 255, 0.1),
+                  rgba(255, 0, 255, 0.1)
+                );
+              "
+            ></div>
+
+            <!-- Corner Decorations -->
+            <div
+              class="absolute top-0 left-0 w-6 h-6 border-l-2 border-t-2 border-cyan-400 rounded-tl-lg"
+            ></div>
+            <div
+              class="absolute top-0 right-0 w-6 h-6 border-r-2 border-t-2 border-cyan-400 rounded-tr-lg"
+            ></div>
+            <div
+              class="absolute bottom-0 left-0 w-6 h-6 border-l-2 border-b-2 border-cyan-400 rounded-bl-lg"
+            ></div>
+            <div
+              class="absolute bottom-0 right-0 w-6 h-6 border-r-2 border-b-2 border-cyan-400 rounded-br-lg"
+            ></div>
+
+            <!-- Header -->
+            <div class="text-center mb-8">
+              <div class="inline-block mb-4">
+                <svg
+                  class="w-16 h-16 mx-auto text-cyan-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="1"
+                    d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z"
+                  />
+                </svg>
+              </div>
+              <h1
+                class="hologram-text text-3xl font-light text-cyan-300 tracking-widest uppercase"
+              >
+                Access
+              </h1>
+              <p class="text-cyan-500/60 text-sm mt-2 tracking-wider">
+                Initialize hologram link
+              </p>
+            </div>
+
+            <!-- Global Error -->
+            <div
+              x-show="globalError"
+              x-transition
+              class="mb-6 p-3 rounded border border-red-500/50 bg-red-500/10 backdrop-blur-sm"
+            >
+              <p
+                class="text-red-400 text-sm text-center"
+                x-text="globalError"
+              ></p>
+            </div>
+
+            <!-- Email Field -->
+            <div class="mb-6">
+              <label
+                class="block text-cyan-400/80 text-sm tracking-wider mb-2 uppercase"
+                >Frequency ID</label
+              >
+              <input
+                type="email"
+                x-model="email"
+                @blur="validateField('email')"
+                :class="{'border-red-500': errors.email, 'border-green-500': email && !errors.email}"
+                class="input-hologram w-full px-4 py-3 rounded text-cyan-100 placeholder-cyan-600/50 focus:outline-none transition-all duration-300"
+                placeholder="identity@hologram.io"
+              />
+              <p
+                x-show="errors.email"
+                x-text="errors.email"
+                class="text-red-400 text-xs mt-2 flex items-center gap-1"
+                x-transition
+              ></p>
+            </div>
+
+            <!-- Password Field -->
+            <div class="mb-8">
+              <label
+                class="block text-cyan-400/80 text-sm tracking-wider mb-2 uppercase"
+                >Access Cipher</label
+              >
+              <div class="relative">
+                <input
+                  :type="showPassword ? 'text' : 'password'"
+                  x-model="password"
+                  @blur="validateField('password')"
+                  :class="{'border-red-500': errors.password}"
+                  class="input-hologram w-full px-4 py-3 rounded text-cyan-100 placeholder-cyan-600/50 focus:outline-none transition-all duration-300 pr-12"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  @click="showPassword = !showPassword"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-cyan-500 hover:text-cyan-300 transition-colors"
+                >
+                  <svg
+                    x-show="!showPassword"
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                    />
+                  </svg>
+                  <svg
+                    x-show="showPassword"
+                    class="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                    />
+                  </svg>
+                </button>
+              </div>
+              <p
+                x-show="errors.password"
+                x-text="errors.password"
+                class="text-red-400 text-xs mt-2"
+                x-transition
+              ></p>
+            </div>
+
+            <!-- Submit Button -->
+            <button
+              type="submit"
+              :disabled="isSubmitting"
+              class="btn-hologram w-full py-3 rounded text-cyan-300 font-medium tracking-widest uppercase transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span
+                x-show="!isSubmitting"
+                class="flex items-center justify-center gap-2"
+              >
+                <span>Establish Link</span>
+                <svg
+                  class="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 10V3L4 14h7v7l9-11h-7z"
+                  />
+                </svg>
+              </span>
+              <span
+                x-show="isSubmitting"
+                class="flex items-center justify-center gap-2"
+              >
+                <svg
+                  class="animate-spin w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    class="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    stroke-width="4"
+                  ></circle>
+                  <path
+                    class="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"
+                  ></path>
+                </svg>
+                <span>Connecting...</span>
+              </span>
+            </button>
+
+            <!-- Register Link -->
+            <div class="mt-6 text-center">
+              <p class="text-cyan-600 text-sm">
+                No hologram identity?
+                <a
+                  href="/register"
+                  class="text-cyan-400 hover:text-cyan-300 transition-colors underline underline-offset-4"
+                >
+                  Initialize profile
+                </a>
+              </p>
+            </div>
+
+            <!-- Demo Hint -->
+            <div class="mt-6 pt-4 border-t border-cyan-500/20">
+              <p class="text-cyan-600/60 text-xs text-center">
+                Demo: demo@hologram.io / demo123
+              </p>
+            </div>
+          </form>
+        </div>
+
+        <!-- Pedestal -->
+        <div class="absolute -bottom-20 left-1/2 -translate-x-1/2 w-48 h-8">
+          <div
+            class="w-full h-full rounded-full bg-gradient-to-t from-cyan-500/30 to-cyan-400/10 blur-md"
+          ></div>
+          <div
+            class="absolute inset-2 rounded-full border border-cyan-400/50"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Tech Lines Decoration -->
+      <div class="fixed bottom-10 left-10 text-cyan-500/30 text-xs font-mono">
+        <div>SYS.AUTH.v3.2.1</div>
+        <div>HOLOMATRIX:ACTIVE</div>
+      </div>
+
+      <div
+        class="fixed top-10 right-10 text-cyan-500/30 text-xs font-mono text-right"
+      >
+        <div>FREQUENCY:SCANNING</div>
+        <div>STATUS:READY</div>
+      </div>
+    </div>
+
+    <script>
+      function loginForm() {
+        return {
+          email: "",
+          password: "",
+          showPassword: false,
+          isSubmitting: false,
+          errors: {},
+          globalError: "",
+
+          validateField(field) {
+            if (field === "email") {
+              if (!this.email) {
+                this.errors.email = "Email frequency required";
+              } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {
+                this.errors.email = "Invalid frequency pattern";
+              } else {
+                delete this.errors.email;
+              }
+            }
+            if (field === "password") {
+              if (!this.password) {
+                this.errors.password = "Access cipher required";
+              } else {
+                delete this.errors.password;
+              }
+            }
+          },
+
+          async submit() {
+            this.globalError = "";
+            this.errors = {};
+
+            this.validateField("email");
+            this.validateField("password");
+
+            if (Object.keys(this.errors).length > 0) return;
+
+            this.isSubmitting = true;
+
+            try {
+              const formData = new FormData();
+              formData.append("email", this.email);
+              formData.append("password", this.password);
+
+              const response = await fetch("/login", {
+                method: "POST",
+                body: formData,
+              });
+
+              const data = await response.json();
+
+              if (data.success) {
+                window.location.href = "/dashboard";
+              } else {
+                if (data.errors) {
+                  data.errors.forEach((err) => {
+                    this.errors[err.field] = err.message;
+                  });
+                }
+                if (data.message) {
+                  this.globalError = data.message;
+                }
+              }
+            } catch (error) {
+              this.globalError = "Holomatrix connection failed";
+            } finally {
+              this.isSubmitting = false;
+            }
+          },
+        };
+      }
+    </script>
+  </body>
+</html>
